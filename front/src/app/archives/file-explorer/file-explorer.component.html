@@ -1,0 +1,140 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+    <span>
+        <fa-icon class="" [icon]="faBalanceScale"></fa-icon> <b> Datai&#414;</b>Lex
+    </span>
+        <span class="spacer" style="padding-right: 20px;">
+        <form class="example-form" #f="ngForm" (ngSubmit)="searchDocument(f)">
+        <p style="font-size:14px;padding-left: 20px;text-align:right;">
+            <mat-form-field appearance="standard" style="min-width: 80%;">
+                <mat-label>BUSCAR TERMOS EM ARQUIVO</mat-label>
+                <input matInput placeholder="" [(ngModel)]="searchDoc" name="searchDoc" required>
+                <mat-icon (click)="searchDocument(f)" matSufix>search</mat-icon>
+              </mat-form-field>
+        </p>
+        </form></span>
+        <button mat-icon-button>
+          </button>
+          <button mat-icon-button (click)="navigateUp()">
+              <mat-icon class="pointer file-or-folder-icon" >library_books</mat-icon>
+            </button>&nbsp;
+    <fa-icon class="pointer file-or-folder-icon" (click)="openNewFolderDialog()" [icon]="faFolderPlus"></fa-icon>&nbsp;
+    <fa-icon class="pointer file-or-folder-icon" (click)="createNotes()" [icon]="faFileUpload"></fa-icon>
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logout()">
+        <mat-icon color="accent">clear</mat-icon>
+        <span>SAIR</span>
+      </button>
+      <button mat-menu-item disabled>
+        <mat-icon>notifications</mat-icon>
+        <span>Alertas</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>help_outline</mat-icon>
+        <span>Ajuda</span>
+      </button>
+    </mat-menu>
+     </mat-toolbar-row>
+     </mat-toolbar>
+
+<div class="list-container mat-elevation-z8" [ngClass]="{'visible': showFile}">
+  <mat-table #table [dataSource]="fileElements">
+    <ng-container matColumnDef="list">
+      <mat-cell
+        *matCellDef="let element"
+        flexLayout="column"
+        (click)="navigate(element)"
+        (contextmenu)="openMenu($event, menuTrigger)"
+        class="file-or-folder"
+      >
+      <span [matMenuTriggerFor]="rootMenu" [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger"></span>
+        <span
+          [matMenuTriggerFor]="rootMenu"
+          [matMenuTriggerData]="{element: element}"
+          #menuTrigger="matMenuTrigger">
+        </span>
+        <fa-icon class="file-or-folder-icon pointer" [icon]="faFolder" *ngIf="element.isFolder"></fa-icon>
+        <fa-icon class="file-or-folder-icon pointer" [icon]="faFilePDF" *ngIf="!element.isFolder" (click)="openDocument('assets/'+element.file, element.name)"></fa-icon>
+        <span class="pointer" *ngIf="element.isFolder">{{element.name}}</span>
+        <span class="pointer" *ngIf="!element.isFolder" (click)="openDocument(element)">{{element.name}}</span>
+    </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let element"class="file-or-folder">
+          <span class="spacer"></span>
+        <a  type="button" (click)="deleteElement(element)">
+          <mat-icon class="pointer icon" color="warn">delete</mat-icon>
+        </a>
+      </mat-cell>
+    </ng-container>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>
+
+<section id="viewer" [ngClass]="{'visible': showFile}" style="height: 100%; padding-bottom: 30px;background-color:#f5f5f5;">
+  <p>
+    <mat-toolbar color="secondary">
+            <button class="pointer icon" color="primary" mat-icon-button  (click)="pdfViewer.prevPage()" [disabled]="pdfViewer.getCurrentPage() === 1">
+              <mat-icon>keyboard_arrow_left</mat-icon>
+            </button>
+            <button mat-button disabled>
+              <mat-icon color="primary" class="icon">chrome_reader_mode</mat-icon>
+              <b> {{ pdfViewer.getCurrentPage() }} / {{ pdfViewer.getNumberOfPages() }}</b>
+            </button>  
+            <button mat-icon-button color="primary" (click)="pdfViewer.nextPage()" class="pointer icon" [disabled]="pdfViewer.getCurrentPage() === pdfViewer.getNumberOfPages()">
+                <mat-icon>keyboard_arrow_right</mat-icon>
+            </button>
+                <span class="spacer">
+                  <mat-chip-list>
+                    <mat-chip style="margin:0 auto !important;">{{path}} {{selected}}<mat-icon matChipRemove (click)="closeDocument()">cancel</mat-icon></mat-chip>
+                  </mat-chip-list>
+                 </span>
+                <mat-icon (click)="pdfViewer.zoomOut()" color="primary" class="pointer icon">remove_circle</mat-icon>
+            <button mat-button disabled>Zoom: {{ pdfViewer.getZoomPercent() }} %</button>
+              <mat-icon color="primary" class="pointer icon" (click)="pdfViewer.zoomIn()" >add_circle</mat-icon>
+        </mat-toolbar>
+  </p>
+  <span>
+    <simple-pdf-viewer #pdfViewer [src]=""></simple-pdf-viewer>
+  </span>
+  
+</section>
+
+<mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
+  <ng-template matMenuContent let-element="element">
+    <button mat-menu-item
+    [matMenuTriggerFor]="moveToMenu"
+    [matMenuTriggerData]="{self: element}">
+    <mat-icon>open_with</mat-icon>
+    <span>Mover para</span>
+  </button>
+  <button mat-menu-item (click)="openRenameDialog(element)">
+    <mat-icon>edit</mat-icon>
+    <span>Renomear</span>
+  </button>
+  <button mat-menu-item (click)="deleteElement(element)">
+    <mat-icon color="warn">delete</mat-icon>
+      <span>Apagar</span>
+  </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #moveToMenu="matMenu">
+  <ng-template matMenuContent let-self="self">
+    <ng-container *ngFor="let element of fileElements">
+      <button
+        *ngIf="element.isFolder && element.id !== self.id"
+        mat-menu-item
+        (click)="moveElement(self, element)">
+        {{element.name}}
+      </button>
+    </ng-container>
+  </ng-template>
+</mat-menu>
+
+

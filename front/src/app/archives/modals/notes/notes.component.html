@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+
+<mat-dialog-content class="file-or-folder">
+  
+</mat-dialog-content>
+<mat-form-field class="example-full-width">
+
+    <textarea matInput matAutosize="true" matAutosizeMinRows="5" placeholder="Anotação" [(ngModel)]="description" class="example-full-width">
+
+    </textarea>
+
+</mat-form-field>
+<mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close>
+    Cancelar
+  </button>
+  <button mat-raised-button [mat-dialog-close]="description" color="primary">
+    OK
+  </button>
+</mat-dialog-actions>

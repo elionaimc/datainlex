@@ -1,0 +1,92 @@
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.example-full-width {
+    min-width: 400px;
+}
+
+.mat-card,
+.file-or-folder {
+    color: navy !important;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+#viewer {
+    display: none;
+}
+
+#viewer.visible {
+    display: block;
+}
+
+.list-container {
+    display:block;
+}
+
+.list-container.visible {
+    display: none;
+}
+
+.pdfViewerContainer {
+    overflow:hidden !important;
+}
+
+:host {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    --webkit-touch-callout: none;
+    --webkit-user-select: none;
+    --khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.file-or-folder {
+    padding: 8px;
+    overflow: hidden;
+}
+
+.file-or-folder-icon {
+    width: 30px;
+    min-height: 30px;
+    font-size: 30px;
+    margin-right: 10px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+#martillo {
+    background-image: url('assets/martillo.jpg');
+    background-size: cover;
+    padding-top: 8em !important;
+}
+
+.example-card {
+	width: 400px;
+    margin: 0 auto;
+}
+
+.example-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .example-form > * {
+    width: 100%;
+  }
+
+  .right {
+      float: right !important;
+  }
