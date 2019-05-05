@@ -1,6 +1,6 @@
 <div style="box-sizing: border-box;">
-  <mat-card style="height: 100%; box-sizing: border-box; padding: 0;">
-    <app-file-explorer [fileElements]="fileElements | async" [path]="currentPath" [canNavigateUp]="canNavigateUp"
+  <mat-card style="height: 100vh; box-sizing: border-box; padding: 0;">
+    <app-file-explorer [fileElements]="fileElements | async" [path]="currentPath" [map]="map" [canNavigateUp]="canNavigateUp"
       (folderAdded)="addFolder($event)" (elementRemoved)="removeElement($event)" (navigatedDown)="navigateToFolder($event)"
       (navigatedUp)="navigateUp()" (elementRenamed)="renameElement($event)" (elementMoved)="moveElement($event)"
       style="overflow:hidden !important">

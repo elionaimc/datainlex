@@ -1,4 +1,5 @@
-<mat-toolbar color="primary">
+ <!-- Barra de nagegação superior -->
+ <mat-toolbar color="primary">
     <mat-toolbar-row>
     <span>
         <fa-icon class="" [icon]="faBalanceScale"></fa-icon> <b> Datai&#414;</b>Lex
@@ -23,87 +24,85 @@
     <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>
-
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="logout()">
-        <mat-icon color="accent">clear</mat-icon>
-        <span>SAIR</span>
-      </button>
-      <button mat-menu-item disabled>
-        <mat-icon>notifications</mat-icon>
-        <span>Alertas</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>help_outline</mat-icon>
-        <span>Ajuda</span>
-      </button>
-    </mat-menu>
      </mat-toolbar-row>
-     </mat-toolbar>
-
-<div class="list-container mat-elevation-z8" [ngClass]="{'visible': showFile}">
-  <mat-table #table [dataSource]="fileElements">
-    <ng-container matColumnDef="list">
-      <mat-cell
-        *matCellDef="let element"
-        flexLayout="column"
-        (click)="navigate(element)"
-        (contextmenu)="openMenu($event, menuTrigger)"
-        class="file-or-folder"
-      >
-      <span [matMenuTriggerFor]="rootMenu" [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger"></span>
-        <span
-          [matMenuTriggerFor]="rootMenu"
-          [matMenuTriggerData]="{element: element}"
-          #menuTrigger="matMenuTrigger">
+</mat-toolbar>
+<!-- #fim da barra de navegação superior -->
+<mat-grid-list cols="4" rowHeight="fit" class="grid-list">
+ 
+    <!-- Área de navegação de arquivos -->
+    <mat-grid-tile colspan="1" class="baseline-top" style="overflow:auto;">
+        <div class="list-container" style="min-width: 100%;">
+          <div class="list-container">
+              <mat-list>
+                  <h3 mat-subheader style="background-color: #f5f5f5; min-height: 62px;">
+                      <button mat-icon-button *ngIf="canNavigateUp" (click)="navigateUp()">
+                      <mat-icon>
+                          keyboard_arrow_left
+                        </mat-icon>
+                        </button>
+                        <span> {{ path || 'Arquivos/'}} </span>
+                  </h3>
+                  <mat-list-item *ngFor="let element of fileElements" (contextmenu)="openMenu($event, menuTrigger)">
+                    <mat-icon class="pointer" mat-list-icon (click)="navigate(element)" color="primary" *ngIf="element.isFolder"
+                    >folder</mat-icon>
+                    <h4 class="pointer" mat-line (click)="navigate(element)" *ngIf="element.isFolder">{{element.name}}</h4>
+                    <mat-icon class="pointer" mat-list-icon (click)="openDocument(element)" color="primary" *ngIf="!element.isFolder"
+                    >insert_drive_file</mat-icon>
+                    <h4 class="pointer" mat-line (click)="openDocument(element)" *ngIf="!element.isFolder">{{element.name}}</h4>
+                    <span [matMenuTriggerFor]="rootMenu" [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger"></span>
+                  </mat-list-item>
+                </mat-list>
+          </div>
+          </div>
+      </mat-grid-tile>
+      <!-- #fim da navegação de arquivos-->
+      <mat-grid-tile colspan="3" *ngIf="!showFile">
+          <mat-progress-bar [ngClass]="{'visible': loading, 'hidden': !loading}" mode="indeterminate"></mat-progress-bar>
+      </mat-grid-tile>
+  <mat-grid-tile colspan="2" [ngClass]="{'visible': showFile, 'hidden': !showFile}">
+    <section style="background-color:#555;width:100%;">
+      <mat-toolbar>
+        <button class="pointer icon" color="primary" mat-icon-button  (click)="pdfViewer.prevPage()" [disabled]="pdfViewer.getCurrentPage() === 1">
+          <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <button mat-button disabled>
+          <mat-icon color="primary" class="icon">chrome_reader_mode</mat-icon>
+          <b> {{ pdfViewer.getCurrentPage() }} / {{ pdfViewer.getNumberOfPages() }}</b>
+        </button>  
+        <button mat-icon-button color="primary" (click)="pdfViewer.nextPage()" class="pointer icon" [disabled]="pdfViewer.getCurrentPage() === pdfViewer.getNumberOfPages()">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+        <span class="spacer">
+          <mat-chip-list>
+            <mat-chip (click)="closeDocument()">{{selected}}<mat-icon matChipRemove (click)="closeDocument()">cancel</mat-icon></mat-chip>
+          </mat-chip-list>
         </span>
-        <fa-icon class="file-or-folder-icon pointer" [icon]="faFolder" *ngIf="element.isFolder"></fa-icon>
-        <fa-icon class="file-or-folder-icon pointer" [icon]="faFilePDF" *ngIf="!element.isFolder" (click)="openDocument('assets/'+element.file, element.name)"></fa-icon>
-        <span class="pointer" *ngIf="element.isFolder">{{element.name}}</span>
-        <span class="pointer" *ngIf="!element.isFolder" (click)="openDocument(element)">{{element.name}}</span>
-    </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-      <mat-cell *matCellDef="let element"class="file-or-folder">
-          <span class="spacer"></span>
-        <a  type="button" (click)="deleteElement(element)">
-          <mat-icon class="pointer icon" color="warn">delete</mat-icon>
-        </a>
-      </mat-cell>
-    </ng-container>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-</div>
+        <mat-icon (click)="pdfViewer.zoomOut()" color="primary" class="pointer icon">remove_circle</mat-icon>
+        <button mat-button disabled>Zoom: {{ pdfViewer.getZoomPercent() }} %</button>
+        <mat-icon color="primary" class="pointer icon" (click)="pdfViewer.zoomIn()" >add_circle</mat-icon>
+      </mat-toolbar>
+      <simple-pdf-viewer #pdfViewer [removePageBorders]="true"></simple-pdf-viewer>
+    </section>
+  </mat-grid-tile>
 
-<section id="viewer" [ngClass]="{'visible': showFile}" style="height: 100%; padding-bottom: 30px;background-color:#f5f5f5;">
-  <p>
-    <mat-toolbar color="secondary">
-            <button class="pointer icon" color="primary" mat-icon-button  (click)="pdfViewer.prevPage()" [disabled]="pdfViewer.getCurrentPage() === 1">
-              <mat-icon>keyboard_arrow_left</mat-icon>
-            </button>
-            <button mat-button disabled>
-              <mat-icon color="primary" class="icon">chrome_reader_mode</mat-icon>
-              <b> {{ pdfViewer.getCurrentPage() }} / {{ pdfViewer.getNumberOfPages() }}</b>
-            </button>  
-            <button mat-icon-button color="primary" (click)="pdfViewer.nextPage()" class="pointer icon" [disabled]="pdfViewer.getCurrentPage() === pdfViewer.getNumberOfPages()">
-                <mat-icon>keyboard_arrow_right</mat-icon>
-            </button>
-                <span class="spacer">
-                  <mat-chip-list>
-                    <mat-chip style="margin:0 auto !important;">{{path}} {{selected}}<mat-icon matChipRemove (click)="closeDocument()">cancel</mat-icon></mat-chip>
-                  </mat-chip-list>
-                 </span>
-                <mat-icon (click)="pdfViewer.zoomOut()" color="primary" class="pointer icon">remove_circle</mat-icon>
-            <button mat-button disabled>Zoom: {{ pdfViewer.getZoomPercent() }} %</button>
-              <mat-icon color="primary" class="pointer icon" (click)="pdfViewer.zoomIn()" >add_circle</mat-icon>
-        </mat-toolbar>
-  </p>
-  <span>
-    <simple-pdf-viewer #pdfViewer [src]=""></simple-pdf-viewer>
-  </span>
-  
-</section>
+  <mat-grid-tile colspan="1" [ngClass]="{'visible': showFile, 'hidden': !showFile}" >Bloco de notas</mat-grid-tile>
+</mat-grid-list>
+
+
+<mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon color="accent">clear</mat-icon>
+      <span>SAIR</span>
+    </button>
+    <button mat-menu-item disabled>
+      <mat-icon>notifications</mat-icon>
+      <span>Alertas</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>help_outline</mat-icon>
+      <span>Ajuda</span>
+    </button>
+  </mat-menu>
 
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
   <ng-template matMenuContent let-element="element">
@@ -126,12 +125,12 @@
 
 <mat-menu #moveToMenu="matMenu">
   <ng-template matMenuContent let-self="self">
-    <ng-container *ngFor="let element of fileElements">
+    <ng-container *ngFor="let element of map | keyvalue">
       <button
-        *ngIf="element.isFolder && element.id !== self.id"
+        *ngIf="element.value.isFolder && element.value.id !== self.id && element.value.id != self.parent"
         mat-menu-item
-        (click)="moveElement(self, element)">
-        {{element.name}}
+        (click)="moveElement(self, element.value)">
+        {{element.value.name}}
       </button>
     </ng-container>
   </ng-template>

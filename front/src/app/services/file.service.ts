@@ -9,6 +9,7 @@ export interface IFileService {
   update(id: string, update: Partial<FileElement>);
   queryInFolder(folderId: string): Observable<FileElement[]>;
   get(id: string): FileElement;
+  getMap(): Map<string, FileElement>;
 }
 
 @Injectable({
@@ -18,6 +19,7 @@ export class FileService implements IFileService {
 
   private querySubject: BehaviorSubject<FileElement[]>;
   private map = new Map<string, FileElement>();
+  allFiles: FileElement[];
 
   constructor() { }
 
@@ -43,12 +45,14 @@ export class FileService implements IFileService {
       if (element.parent === folderId) {
         result.push(this.clone(element));
       }
-    })
+    });
+
     if (!this.querySubject) {
       this.querySubject = new BehaviorSubject(result);
     } else {
       this.querySubject.next(result);
     }
+
     return this.querySubject.asObservable();
   }
 
@@ -58,5 +62,9 @@ export class FileService implements IFileService {
 
   clone(element: FileElement) {
     return JSON.parse(JSON.stringify(element));
+  }
+
+  getMap() {
+    return this.map;
   }
 }

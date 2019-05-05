@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  api: 'http://datainlex.tech/api'
+  api: 'https://datainlex.tech/api'
 };

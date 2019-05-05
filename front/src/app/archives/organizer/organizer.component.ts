@@ -7,8 +7,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-organizer',
-  templateUrl: './organizer.component.html',
-  styleUrls: ['./organizer.component.css']
+  templateUrl: './organizer.component.html'
 })
 export class OrganizerComponent implements OnInit {
 
@@ -17,6 +16,7 @@ export class OrganizerComponent implements OnInit {
   currentRoot: FileElement;
   currentPath: string;
   canNavigateUp = false;
+  map: Map<string, FileElement>;
 
   constructor(
     public fileService: FileService,
@@ -33,6 +33,7 @@ export class OrganizerComponent implements OnInit {
       this.fileService.add({ name: '1.5.- Recurso de reforma y sub. de apelación contra auto de 30 de mayo.pdf', isFolder: false, parent: folderA.id, file: '03.pdf' });
       this.fileService.add({ name: '1.6.- Pidiendo notificación auto incoación dil. prev. y nulidad de lo actuado.pdf', isFolder: false, parent: folderA.id, file: '04.pdf' });
       this.updateFileElementQuery();
+      this.map = this.fileService.getMap();
     } else {
       this.router.navigate(['/login']);
     }
@@ -64,14 +65,14 @@ export class OrganizerComponent implements OnInit {
 
   pushToPath(path: string, folderName: string) {
     let p = path ? path : '';
-    p += `${folderName} /`;
+    p += `${folderName}/`;
     return p;
   }
 
   popFromPath(path: string) {
     let p = path ? path : '';
     const split = p.split('/');
-    split.splice(split.length -2, 1);
+    split.splice(split.length - 2, 1);
     p = split.join('/');
     return p;
   }

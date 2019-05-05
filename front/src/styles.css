@@ -15,20 +15,30 @@
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-#viewer {
+mat-grid-tile.hidden, mat-progress-bar.hidden {
     display: none;
 }
 
-#viewer.visible {
+mat-grid-tile.visible, mat-progress-bar.visible {
     display: block;
 }
 
-.list-container {
-    display:block;
+mat-list-item.hidden mat-list-item-content {
+    display:none !important;
+    height: 0px;
 }
 
-.list-container.visible {
-    display: none;
+mat-list-item.hidden {
+    display:none !important;
+    height: 0px;
+}
+
+.mat-expansion-panel-body {
+    padding:0 !important;
+}
+
+.mat-expansion-panel-spacing {
+    margin:0 !important;
 }
 
 .pdfViewerContainer {
@@ -89,4 +99,22 @@
 
   .right {
       float: right !important;
+  }
+
+  .pdfViewer {
+      height: calc(100vh - 150px) !important;
+      overflow: auto;
+      max-width:100%;
+      padding-top: 10px;
+  }
+  .grid-list {
+      height: calc(100vh - 70px);
+  }
+
+ .baseline-top .mat-figure {
+      align-items: baseline !important;
+  }
+
+  mat-list-item {
+      font-size:13px !important;
   }

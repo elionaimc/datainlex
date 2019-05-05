@@ -15,15 +15,24 @@ import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.comp
 import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SimplePdfViewerModule } from 'simple-pdf-viewer';
-import { MatBottomSheetModule, MatCardModule, MatTableModule, MatButtonToggleModule, MatChipList, MatChipsModule } from '@angular/material';
+import { MatBottomSheetModule, MatCardModule, MatTableModule, MatButtonToggleModule, MatChipList, MatChipsModule, MatProgressBarModule } from '@angular/material';
 import { OrganizerComponent } from './organizer/organizer.component';
 import { MaterialModule } from '../core/material/material.module';
 import { ActionComponent } from './modals/action/action.component';
 import { NotesComponent } from './modals/notes/notes.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 @NgModule({
-  declarations: [FileExplorerComponent, RenameDialogComponent, NewFolderDialogComponent, OrganizerComponent, ActionComponent, NotesComponent, BottomSheetOverviewExampleSheet],
+  declarations: [
+    FileExplorerComponent,
+    RenameDialogComponent,
+    NewFolderDialogComponent,
+    OrganizerComponent,
+    ActionComponent,
+    NotesComponent,
+    BottomSheetOverviewExampleSheet
+  ],
   imports: [
     CommonModule,
     FontAwesomeModule,
@@ -33,9 +42,17 @@ import { NotesComponent } from './modals/notes/notes.component';
     SimplePdfViewerModule,
     MaterialModule,
     MatButtonToggleModule,
-    MatChipsModule
+    MatChipsModule,
+    MatExpansionModule,
+    MatProgressBarModule
   ],
   exports: [FileExplorerComponent],
-  entryComponents: [NewFolderDialogComponent, RenameDialogComponent, ActionComponent, NotesComponent, BottomSheetOverviewExampleSheet]
+  entryComponents: [
+    NewFolderDialogComponent,
+    RenameDialogComponent,
+    ActionComponent,
+    NotesComponent,
+    BottomSheetOverviewExampleSheet
+  ]
 })
 export class FileExplorerModule { }

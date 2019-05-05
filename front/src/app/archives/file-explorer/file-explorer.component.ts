@@ -12,6 +12,7 @@ import { ActionComponent } from '../modals/action/action.component';
 import { NotesComponent } from '../modals/notes/notes.component';
 import { NgForm } from '@angular/forms';
 import { MatBottomSheet, MatBottomSheetRef, MatChipInputEvent } from '@angular/material';
+import { FileService } from 'src/app/services/file.service';
 
 @Component({
   selector: 'bottom-sheet-overview-example-sheet',
@@ -28,8 +29,7 @@ export class BottomSheetOverviewExampleSheet {
 
 @Component({
   selector: 'app-file-explorer',
-  templateUrl: './file-explorer.component.html',
-  styleUrls: ['./file-explorer.component.css']
+  templateUrl: './file-explorer.component.html'
 })
 export class FileExplorerComponent {
 
@@ -40,21 +40,18 @@ export class FileExplorerComponent {
   faFileUpload = faFileUpload;
   faSearch = faSearch;
   selected = '';
+  loading = false;
   nomeArquivo = '';
   showFile = false;
   searchDoc: string;
   displayedColumns = ['list', 'actions'];
+  panelOpenState: boolean;
 
-  constructor(
-    public dialog: MatDialog,
-    private router: Router,
-    private bottomSheet: MatBottomSheet
-    ) { }
-
-  @Input() fileElements: FileElement[];
+  @Input() fileElements: FileElement[]; // lista de elementos no nivel atual
   blocoDeNotas: string [];
   @Input() canNavigateUp: string;
   @Input() path: string;
+  @Input() map: Map<string, FileElement>;
 
   @Output() folderAdded = new EventEmitter<{ name: string }>();
   @Output() elementRemoved = new EventEmitter<FileElement>();
@@ -66,6 +63,15 @@ export class FileExplorerComponent {
   @ViewChild(SimplePdfViewerComponent) private pdfViewer: SimplePdfViewerComponent;
   bookmarks: SimplePDFBookmark[] = [];
 
+  constructor(
+    public dialog: MatDialog,
+    private router: Router,
+    private bottomSheet: MatBottomSheet,
+    private fileService: FileService
+    ) {
+      console.log('Construiu', this.map);
+    }
+
   deleteElement(element: FileElement) {
     const type = (element.isFolder) ? `a pasta  ${element.name} e todos os documentos associados a esta` : `o arquivo  ${element.name}`;
     const dialogRef = this.dialog.open(
@@ -74,24 +80,29 @@ export class FileExplorerComponent {
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
         this.elementRemoved.emit(element);
+        this.closeDocument();
       }
     });
   }
 
+  // utilizado para entrar numa pasta
   navigate(element: FileElement) {
     if (element.isFolder) {
       this.showFile = false;
       this.navigatedDown.emit(element);
+      console.log('Navegou', this.map);
     }
   }
 
   navigateUp() {
     this.showFile = false;
     this.navigatedUp.emit();
+    console.log('Navegou pra fora', this.map);
   }
 
   moveElement(element: FileElement, moveTo: FileElement) {
     this.elementMoved.emit({ element, moveTo });
+    this.map = this.fileService.getMap();
   }
 
   openNewFolderDialog() {
@@ -131,10 +142,13 @@ export class FileExplorerComponent {
   }
 
   async openDocument(element: FileElement) {
-    this.selected = element.name;
+    this.loading = true;
+    this.selected = (element.name.length >= 41) ? element.name.substr(0, 40).trim() + '...' : element.name;
     this.pdfViewer.openUrl('assets/' + element.file);
-    this.showFile = true;
-    console.log('elemento: ', element);
+    this.pdfViewer.onLoadComplete.subscribe( res => {
+      this.loading = false;
+      this.showFile = true;
+    });
   }
 
 
