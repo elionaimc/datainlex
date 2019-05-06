@@ -7,18 +7,15 @@
         <span class="spacer" style="padding-right: 20px;">
         <form class="example-form" #f="ngForm" (ngSubmit)="searchDocument(f)">
         <p style="font-size:14px;padding-left: 20px;text-align:right;">
-            <mat-form-field appearance="standard" style="min-width: 80%;">
-                <mat-label>BUSCAR TERMOS EM ARQUIVO</mat-label>
-                <input matInput placeholder="" [(ngModel)]="searchDoc" name="searchDoc" required>
+            <mat-form-field appearance="standard" style="min-width: 80%;" *ngIf="showFile">
+                <mat-label>SEARCH TERMS ON SELECTED FILE</mat-label>
+                <input matInput placeholder="" [(ngModel)]="searchDoc" name="searchDoc">
                 <mat-icon (click)="searchDocument(f)" matSufix>search</mat-icon>
               </mat-form-field>
         </p>
         </form></span>
         <button mat-icon-button>
-          </button>
-          <button mat-icon-button (click)="navigateUp()">
-              <mat-icon class="pointer file-or-folder-icon" >library_books</mat-icon>
-            </button>&nbsp;
+          </button>&nbsp;
     <fa-icon class="pointer file-or-folder-icon" (click)="openNewFolderDialog()" [icon]="faFolderPlus"></fa-icon>&nbsp;
     <fa-icon class="pointer file-or-folder-icon" (click)="createNotes()" [icon]="faFileUpload"></fa-icon>
     <button mat-icon-button [matMenuTriggerFor]="menu">
@@ -40,8 +37,7 @@
                           keyboard_arrow_left
                         </mat-icon>
                         </button>
-                        <mat-icon>folder</mat-icon>
-                        <span> {{ path || "/"}} </span>
+                        <span> {{ path || "Files:"}} </span>
                   </h3>
                   <mat-list-item *ngFor="let element of fileElements" (contextmenu)="openMenu($event, menuTrigger)">
                     <mat-icon class="pointer" mat-list-icon (click)="navigate(element)" color="primary" *ngIf="element.isFolder"
@@ -130,9 +126,26 @@
               </mat-form-field>
               <button mat-raised-button color="primary" (click)="createNotes()"><mat-icon>send</mat-icon> Add note </button>
                 <mat-nav-list>
-                    <a mat-list-item *ngFor="let note of notes" (click)="openNote(note)">
-                        <p mat-line>{{ (note.length >= 31) ? note.substr(0, 30).trim() + '...' : note }}</p>
-                    </a>
+                    <mat-divider></mat-divider>
+                  <a mat-list-item *ngFor="let note of notes" >                      
+                    <mat-divider></mat-divider>
+                      <p mat-line>
+                        {{ (note.length >= 31) ? note.substr(0, 30).trim() + '...' : note }}
+                      </p>
+                      <p mat-line>
+                          <small style="float: right">
+                              <button mat-icon-button (click)="openNote(note)" matTooltip="Read this note">
+                                  <mat-icon>notes</mat-icon>
+                                </button>
+                                <button mat-icon-button matTooltip="Edit this note" color="primary">
+                                  <mat-icon>edit</mat-icon>
+                                </button>
+                              <button mat-icon-button matTooltip="Delete this note" color="warn">
+                                  <mat-icon>delete</mat-icon>
+                                </button>
+                              </small>
+                        </p>
+                  </a>
                   </mat-nav-list>
           </mat-tab>
           <mat-tab label="Pending tasks">
@@ -147,12 +160,25 @@
                         <mat-icon matListIcon>attach_file</mat-icon> Another task
                       </mat-list-option>
                 </mat-selection-list>
-                <mat-label>Actions: </mat-label>
-                <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-                    <mat-button-toggle value="add" color="primary"><mat-icon>playlist_add</mat-icon></mat-button-toggle>
-                    <mat-button-toggle value="check"><mat-icon>playlist_add_check</mat-icon></mat-button-toggle>
-                    <mat-button-toggle value="delete"><mat-icon>delete</mat-icon></mat-button-toggle>
-                  </mat-button-toggle-group>
+                <mat-divider></mat-divider>
+                <mat-nav-list>
+                    <p mat-line>
+                        <small style="float: right">
+                            <button mat-icon-button aria-label="Button that shows a red tooltip"  matTooltip="Add a new task">
+                                <mat-icon>playlist_add</mat-icon>
+                              </button>
+                              <button mat-icon-button matTooltip="Mark as done">
+                                <mat-icon>playlist_add_check</mat-icon>
+                              </button>
+                              <button mat-icon-button color="primary" matTooltip="Mark finished">
+                                <mat-icon>check_box</mat-icon>
+                              </button>
+                            <button mat-icon-button color="warn" matTooltip="Remove selected tasks">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </small>
+                      </p>
+                </mat-nav-list>
           </mat-tab>
         </mat-tab-group>
   </mat-grid-tile>
