@@ -15,7 +15,7 @@ import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.comp
 import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SimplePdfViewerModule } from 'simple-pdf-viewer';
-import { MatBottomSheetModule, MatCardModule, MatTableModule, MatButtonToggleModule, MatChipList, MatChipsModule, MatProgressBarModule } from '@angular/material';
+import { MatBottomSheetModule, MatCardModule, MatTableModule, MatButtonToggleModule, MatChipList, MatChipsModule, MatProgressBarModule, MatRadioModule } from '@angular/material';
 import { OrganizerComponent } from './organizer/organizer.component';
 import { MaterialModule } from '../core/material/material.module';
 import { ActionComponent } from './modals/action/action.component';
@@ -44,7 +44,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatButtonToggleModule,
     MatChipsModule,
     MatExpansionModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatRadioModule
   ],
   exports: [FileExplorerComponent],
   entryComponents: [

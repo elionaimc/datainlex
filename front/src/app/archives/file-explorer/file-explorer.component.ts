@@ -13,6 +13,7 @@ import { NotesComponent } from '../modals/notes/notes.component';
 import { NgForm } from '@angular/forms';
 import { MatBottomSheet, MatBottomSheetRef, MatChipInputEvent } from '@angular/material';
 import { FileService } from 'src/app/services/file.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'bottom-sheet-overview-example-sheet',
@@ -45,7 +46,10 @@ export class FileExplorerComponent {
   showFile = false;
   searchDoc: string;
   displayedColumns = ['list', 'actions'];
-  panelOpenState: boolean;
+  statics = environment.statics;
+  notes = [];
+  newNote = '';
+  navigateToPage: number;
 
   @Input() fileElements: FileElement[]; // lista de elementos no nivel atual
   blocoDeNotas: string [];
@@ -88,21 +92,20 @@ export class FileExplorerComponent {
   // utilizado para entrar numa pasta
   navigate(element: FileElement) {
     if (element.isFolder) {
-      this.showFile = false;
+      this.closeDocument();
       this.navigatedDown.emit(element);
-      console.log('Navegou', this.map);
     }
   }
 
   navigateUp() {
-    this.showFile = false;
+    this.closeDocument();
     this.navigatedUp.emit();
-    console.log('Navegou pra fora', this.map);
   }
 
   moveElement(element: FileElement, moveTo: FileElement) {
     this.elementMoved.emit({ element, moveTo });
     this.map = this.fileService.getMap();
+    this.closeDocument();
   }
 
   openNewFolderDialog() {
@@ -130,21 +133,29 @@ export class FileExplorerComponent {
   }
 
   createNotes() {
-    const title = `Adicione uma anotação ao arquivo `;
-    const dialogRef = this.dialog.open(
-      NotesComponent,
-      { data: { title } });
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        this.blocoDeNotas.push(res);
-      }
-    });
+    // const title = `Adicione uma anotação ao arquivo `;
+    // const dialogRef = this.dialog.open(
+    //   NotesComponent,
+    //   { data: { title } });
+    // dialogRef.afterClosed().subscribe(res => {
+    //   if (res) {
+    //     this.blocoDeNotas.push(res);
+    //   }
+    // });
+    if (this.newNote !== '') {
+      this.notes.push(this.newNote);
+    }
+    this.newNote = '';
+  }
+
+  openNote(note) {
+    this.newNote = note;
   }
 
   async openDocument(element: FileElement) {
     this.loading = true;
     this.selected = (element.name.length >= 41) ? element.name.substr(0, 40).trim() + '...' : element.name;
-    this.pdfViewer.openUrl('assets/' + element.file);
+    this.pdfViewer.openUrl(this.statics + element.file);
     this.pdfViewer.onLoadComplete.subscribe( res => {
       this.loading = false;
       this.showFile = true;
@@ -162,9 +173,9 @@ export class FileExplorerComponent {
   }
 
   closeDocument() {
+    this.pdfViewer.openUrl('');
     this.selected = '';
     this.showFile = false;
-    this.pdfViewer.openUrl('');
   }
 
   searchDocument(f: NgForm) {

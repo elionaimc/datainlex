@@ -34,13 +34,14 @@
         <div class="list-container" style="min-width: 100%;">
           <div class="list-container">
               <mat-list>
-                  <h3 mat-subheader style="background-color: #f5f5f5; min-height: 62px;">
+                  <h3 mat-subheader style="min-height: 42px;">
                       <button mat-icon-button *ngIf="canNavigateUp" (click)="navigateUp()">
                       <mat-icon>
                           keyboard_arrow_left
                         </mat-icon>
                         </button>
-                        <span> {{ path || 'Arquivos/'}} </span>
+                        <mat-icon>folder</mat-icon>
+                        <span> {{ path || "/"}} </span>
                   </h3>
                   <mat-list-item *ngFor="let element of fileElements" (contextmenu)="openMenu($event, menuTrigger)">
                     <mat-icon class="pointer" mat-list-icon (click)="navigate(element)" color="primary" *ngIf="element.isFolder"
@@ -56,17 +57,47 @@
           </div>
       </mat-grid-tile>
       <!-- #fim da navegação de arquivos-->
-      <mat-grid-tile colspan="3" *ngIf="!showFile">
-          <mat-progress-bar [ngClass]="{'visible': loading, 'hidden': !loading}" mode="indeterminate"></mat-progress-bar>
+      <mat-grid-tile colspan="1" *ngIf="!showFile" class="baseline-top" style="min-width:600px;">
+          <mat-card *ngIf="!loading" style="box-shadow: none;">
+              <mat-card-header color="primary">
+                <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-title>
+                    <fa-icon class="" [icon]="faBalanceScale"></fa-icon> <b> Datai&#414;</b>Lex
+                </mat-card-title>
+                <mat-card-subtitle>Your own office, online.</mat-card-subtitle>
+              </mat-card-header>
+              <img mat-card-image src="assets/martillo.jpg" alt="Photo of a Shiba Inu">
+              <mat-card-content>
+                <p>
+                  The best way to manage documents and organize you proccess-related resources.
+                </p><br/>&nbsp;<br/>
+                <mat-radio-group aria-labelledby="legal">
+                    <mat-radio-button value="agree">
+                        I have read and accept Terms and Conditions.
+                      </mat-radio-button>
+                      <br/>&nbsp;<br/>
+                <mat-radio-button value="dontagree">
+                    I dont agree with Terms and Conditions.
+                </mat-radio-button>
+              </mat-radio-group>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-raised-button color="primary"><mat-icon>send</mat-icon> SEND </button>
+              </mat-card-actions>
+            </mat-card>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate" style="padding-top:300px;"></mat-progress-bar>
       </mat-grid-tile>
   <mat-grid-tile colspan="2" [ngClass]="{'visible': showFile, 'hidden': !showFile}">
     <section style="background-color:#555;width:100%;">
       <mat-toolbar>
-        <button class="pointer icon" color="primary" mat-icon-button  (click)="pdfViewer.prevPage()" [disabled]="pdfViewer.getCurrentPage() === 1">
+          <mat-icon color="primary" class="icon">chrome_reader_mode</mat-icon>
+       <mat-form-field appearance="standard" style="min-width: 80%;" style="width:40px !important; font-size:13px !important;border:0; padding:0">
+          <input matInput placeholder="{{ pdfViewer.getCurrentPage() }}" [(ngModel)]="navigateToPage" name="navigateToPage" required>
+        </mat-form-field>&nbsp;&nbsp;<mat-icon color="primary" class="icon" (click)="this.pdfViewer.navigateToPage(navigateToPage)">search</mat-icon>
+         <button class="pointer icon" color="primary" mat-icon-button  (click)="pdfViewer.prevPage()" [disabled]="pdfViewer.getCurrentPage() === 1">
           <mat-icon>keyboard_arrow_left</mat-icon>
         </button>
         <button mat-button disabled>
-          <mat-icon color="primary" class="icon">chrome_reader_mode</mat-icon>
           <b> {{ pdfViewer.getCurrentPage() }} / {{ pdfViewer.getNumberOfPages() }}</b>
         </button>  
         <button mat-icon-button color="primary" (click)="pdfViewer.nextPage()" class="pointer icon" [disabled]="pdfViewer.getCurrentPage() === pdfViewer.getNumberOfPages()">
@@ -74,18 +105,57 @@
         </button>
         <span class="spacer">
           <mat-chip-list>
-            <mat-chip (click)="closeDocument()">{{selected}}<mat-icon matChipRemove (click)="closeDocument()">cancel</mat-icon></mat-chip>
+            <mat-chip>{{selected}}<mat-icon matChipRemove (click)="closeDocument()">cancel</mat-icon></mat-chip>
           </mat-chip-list>
         </span>
         <mat-icon (click)="pdfViewer.zoomOut()" color="primary" class="pointer icon">remove_circle</mat-icon>
-        <button mat-button disabled>Zoom: {{ pdfViewer.getZoomPercent() }} %</button>
+        <button mat-button disabled>{{ pdfViewer.getZoomPercent() }} %</button>
         <mat-icon color="primary" class="pointer icon" (click)="pdfViewer.zoomIn()" >add_circle</mat-icon>
       </mat-toolbar>
       <simple-pdf-viewer #pdfViewer [removePageBorders]="true"></simple-pdf-viewer>
     </section>
   </mat-grid-tile>
 
-  <mat-grid-tile colspan="1" [ngClass]="{'visible': showFile, 'hidden': !showFile}" >Bloco de notas</mat-grid-tile>
+  <mat-grid-tile colspan="1" *ngIf="showFile" [ngClass]="{'visible': showFile, 'hidden': !showFile}" class="baseline-top" style="overflow:auto;">
+      <mat-tab-group>
+          <mat-tab label="Notes">
+              <mat-form-field class="example-full-width" style="padding:15px;">
+                  <textarea matInput
+                  cdkTextareaAutosize
+                  placeholder="Note:"
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="2"
+                  cdkAutosizeMaxRows="8"
+                  [(ngModel)]="newNote" name="newNote"></textarea>
+              </mat-form-field>
+              <button mat-raised-button color="primary" (click)="createNotes()"><mat-icon>send</mat-icon> Add note </button>
+                <mat-nav-list>
+                    <a mat-list-item *ngFor="let note of notes" (click)="openNote(note)">
+                        <p mat-line>{{ (note.length >= 31) ? note.substr(0, 30).trim() + '...' : note }}</p>
+                    </a>
+                  </mat-nav-list>
+          </mat-tab>
+          <mat-tab label="Pending tasks">
+              <mat-selection-list #tasks>
+                  <mat-list-option>
+                      <mat-icon matListIcon>attach_file</mat-icon> First task
+                  </mat-list-option>
+                  <mat-list-option disabled>
+                      <mat-icon matListIcon>check</mat-icon> Second task
+                    </mat-list-option>
+                    <mat-list-option>
+                        <mat-icon matListIcon>attach_file</mat-icon> Another task
+                      </mat-list-option>
+                </mat-selection-list>
+                <mat-label>Actions: </mat-label>
+                <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+                    <mat-button-toggle value="add" color="primary"><mat-icon>playlist_add</mat-icon></mat-button-toggle>
+                    <mat-button-toggle value="check"><mat-icon>playlist_add_check</mat-icon></mat-button-toggle>
+                    <mat-button-toggle value="delete"><mat-icon>delete</mat-icon></mat-button-toggle>
+                  </mat-button-toggle-group>
+          </mat-tab>
+        </mat-tab-group>
+  </mat-grid-tile>
 </mat-grid-list>
 
 

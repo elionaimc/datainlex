@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  api: 'https://datainlex.tech/api'
+  api: 'https://datainlex.tech/api',
+  statics: 'assets/'
 };
 
 /*

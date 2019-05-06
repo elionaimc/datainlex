@@ -6,7 +6,7 @@
 }
 
 .example-full-width {
-    min-width: 400px;
+    min-width: 300px;
 }
 
 .mat-card,
@@ -117,4 +117,9 @@ mat-list-item.hidden {
 
   mat-list-item {
       font-size:13px !important;
+  }
+
+  .example-header-image {
+    background-image: url('assets/martillo.jpg');
+    background-size: cover;
   }
